@@ -519,7 +519,7 @@ namespace Math
 	inline float VectorNormalize(Vec3 &vec)
 	{
 		float mag = vec.Length();
-		float den = 1.f / (mag + FLT_EPSILON);
+		float den = 1.0f / (mag + FLT_EPSILON);
 		vec.x *= den;
 		vec.y *= den;
 		vec.z *= den;

@@ -72,7 +72,7 @@ ProjectileInfo_t CProjectileWeapon::GetWeaponInfo() const
 		case Demoman_m_TopShelf:
 		case Demoman_m_Warhawk:
 		case Demoman_m_ButcherBird: {
-			out = { 1217.0f, 0.4f }; //1216.6f in the wiki, 1200.0f in the game code :thinking:
+			out = { 1217.0f, 0.4f }; //1216.6f in the wiki, 1200.0f in the game code :thinking: 1217.0f is the actual value
 			break;
 		}
 
@@ -138,8 +138,12 @@ ProjectileInfo_t CProjectileWeapon::GetWeaponInfo() const
 
 //-------------------------------------------------- CPredictor
 
-Vec3 CPredictor::PredictPosition(float time, const Vec3 &pos, const Vec3 &vel, const Vec3 &accel, bool on_ground) const {
-	return (on_ground ? (pos + (vel * time)) : (pos + (vel * time) - accel * 0.5f * time * time + std::max(1.0f, time * 0.4f)));
+Vec3 CPredictor::PredictPosition(float time, const Vec3 &pos, const Vec3 &vel, const Vec3 &accel, bool on_ground) const
+{
+	if (on_ground)
+		return (pos + (vel * time));
+
+	else return (pos + (vel * time) - accel * 0.5f * time * time + std::max(1.0f, time * 0.4f));
 }
 
 //-------------------------------------------------- Solver
@@ -160,7 +164,7 @@ bool Solve2D(const Vec3 &origin, const CProjectileWeapon &weapon, const Vec3 &ta
 	const Vec3 v	= (target - origin);
 	const float dx	= sqrt(v.x * v.x + v.y * v.y);
 	const float v0	= weapon.GetWeaponInfo().speed;
-	const float g	= (800.0f * weapon.GetWeaponInfo().gravity); //oops 800 fix later
+	const float g	= (800.0f * weapon.GetWeaponInfo().gravity);
 
 	if (g > 0.0f) 
 	{
@@ -220,7 +224,7 @@ bool Solve(const Vec3 &origin,
 		gInts.EngineTrace->TraceRay(ray, MASK_PLAYERSOLID, &filter, &trace);
 
 		if (trace.DidHit())
-			predicted_pos.z = (trace.endpos.z + on_ground_hit_height);
+			predicted_pos.z = (trace.endpos.z > target.origin.z ? trace.endpos.z : (trace.endpos.z + on_ground_hit_height));
 
 		if (!Solve2D(origin, weapon, predicted_pos, sol))
 			return false;
