@@ -625,9 +625,9 @@ void CMenu::Run(IDirect3DDevice9 *pDevice)
 						ImGui::Separator();
 						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 
-						if (gMisc.cheats) {
-							if (ImGui::Button(gMisc.cheats->GetInt() ? "sv_cheats 1" : "sv_cheats 0", ImVec2(100.0f, 20.0f))) {
-								gMisc.cheats->SetValue(!gMisc.cheats->GetInt());
+						if (gConVars.sv_cheats) {
+							if (ImGui::Button(gConVars.sv_cheats->GetInt() ? "sv_cheats 1" : "sv_cheats 0", ImVec2(100.0f, 20.0f))) {
+								gConVars.sv_cheats->SetValue(!gConVars.sv_cheats->GetInt());
 							}
 						}
 						

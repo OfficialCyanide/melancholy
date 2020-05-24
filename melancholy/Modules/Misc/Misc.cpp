@@ -24,8 +24,7 @@ void CMisc::Run(CBaseEntity *pLocal, CUserCmd *cmd)
 	if (Bunnyhop)
 		Bhop(pLocal, cmd);
 
-	static ConVar *host_timescale = gInts.ConVars->FindVar("host_timescale");
-	host_timescale->SetValue(timescale);
+	gConVars.host_timescale->SetValue(timescale);
 }
 
 CMisc gMisc;

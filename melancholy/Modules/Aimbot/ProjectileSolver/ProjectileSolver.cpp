@@ -204,17 +204,14 @@ bool Solve(const Vec3 &origin,
 	CTraceFilterNoPlayers filter;
 	filter.pSkip = target.ptr;
 
-	INetChannelInfo *net_chan			= reinterpret_cast<INetChannelInfo *>(gInts.Engine->GetNetChannelInfo());
-	static ConVar *cl_interp			= gInts.ConVars->FindVar("cl_interp");
-	static ConVar *cl_flipviewmodels	= gInts.ConVars->FindVar("cl_flipviewmodels");
-	bool is_vm_flipped					= (cl_flipviewmodels->GetInt() ? true : false);
-
+	INetChannelInfo *net_chan = reinterpret_cast<INetChannelInfo *>(gInts.Engine->GetNetChannelInfo());
+	bool is_vm_flipped = (gConVars.cl_flipviewmodels->GetInt() ? true : false);
 	Vec3 vecForward = Vec3(), vecRight = Vec3(), vecUp = Vec3();
 	Math::AngleVectors(local_angles, &vecForward, &vecRight, &vecUp);
 
 	for (float target_time = 0.0f; target_time <= MAX_TIME; target_time += TIME_STEP)
 	{
-		float interp	= cl_interp->GetFloat();
+		float interp	= gConVars.cl_interp->GetFloat();
 		float latency	= (net_chan->GetLatency(FLOW_OUTGOING) + net_chan->GetLatency(FLOW_INCOMING));
 		float time		= (interp + latency + target_time);
 
@@ -223,8 +220,13 @@ bool Solve(const Vec3 &origin,
 		ray.Init(target.origin, predicted_pos);
 		gInts.EngineTrace->TraceRay(ray, MASK_PLAYERSOLID, &filter, &trace);
 
-		if (trace.DidHit())
-			predicted_pos.z = (trace.endpos.z > target.origin.z ? trace.endpos.z : (trace.endpos.z + on_ground_hit_height));
+		if (trace.fraction < 0.99f)
+		{
+			if (trace.endpos.z < target.origin.z)
+				predicted_pos.z = (trace.endpos.z + on_ground_hit_height);
+
+			else predicted_pos.z = trace.endpos.z;
+		}
 
 		if (!Solve2D(origin, weapon, predicted_pos, sol))
 			return false;

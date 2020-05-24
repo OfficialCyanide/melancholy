@@ -889,3 +889,16 @@ MatHelper_t gMatHelper;
 //-------------------------------------------------- LocalInfo_t
 
 LocalInfo_t gLocalInfo;
+
+//-------------------------------------------------- ConVars_t
+
+void ConVars_t::Initialize()
+{
+	sv_gravity			= gInts.ConVars->FindVar("sv_gravity");
+	cl_interp			= gInts.ConVars->FindVar("cl_interp");
+	cl_flipviewmodels	= gInts.ConVars->FindVar("cl_flipviewmodels");
+	sv_cheats			= gInts.ConVars->FindVar("sv_cheats");
+	host_timescale		= gInts.ConVars->FindVar("host_timescale");
+}
+
+ConVars_t gConVars;

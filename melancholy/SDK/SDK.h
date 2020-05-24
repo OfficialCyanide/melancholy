@@ -212,6 +212,19 @@ struct LocalInfo_t {
 extern LocalInfo_t gLocalInfo;
 
 
+struct ConVars_t {
+	ConVar *sv_gravity			= nullptr;
+	ConVar *cl_interp			= nullptr;
+	ConVar *cl_flipviewmodels	= nullptr;
+	ConVar *sv_cheats			= nullptr;
+	ConVar *host_timescale		= nullptr;
+
+	void Initialize();
+};
+
+extern ConVars_t gConVars;
+
+
 namespace Math {
 	inline bool W2S(Vec3 &vOrigin, Vec3 &vScreen) {
 		const matrix3x4 &worldToScreen = gInts.Engine->WorldToScreenMatrix();
@@ -257,7 +270,7 @@ namespace Utils
 	{
 		static uint32_t cnt = 0;
 		float freq = 0.01f;
-
+		
 		RGBA_t color = RGBA_t(
 			std::sin(freq * cnt + 0) * 127 + 128,
 			std::sin(freq * cnt + 2) * 127 + 128,

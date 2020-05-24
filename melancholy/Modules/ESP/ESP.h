@@ -57,21 +57,21 @@ public:
 	bool NoTeammatePlayers	= true;
 	bool IgnoreCloaked		= false;
 	bool PlayerName			= true;
-	bool PlayerHealth		= true;
-	int PlayerHealthBar		= 0;	//0 off 1 vertical 2 horizontal
-	bool PlayerClass		= false;
+	bool PlayerHealth		= false;
+	int PlayerHealthBar		= 1;	//0 off 1 vertical 2 horizontal
+	bool PlayerClass		= true;
 	bool PlayerCond			= true;
-	bool PlayerBox			= false;
+	bool PlayerBox			= true;
 	int PlayerBones			= 0;	//0 off 1 esp 2 white
 
 	//-------------------------------------------------- buildings
 	int BuildingTextPos			= 0;	//0 top right 1 left bottom 2 center
 	bool NoTeammateBuildings	= true;
 	bool BuildingName			= true;
-	bool BuildingHealth			= true;
-	int BuildingHealthBar		= 0;	//0 off 1 vertical 2 horizontal
+	bool BuildingHealth			= false;
+	int BuildingHealthBar		= 2;	//0 off 1 vertical 2 horizontal
 	bool BuildingCond			= true;
-	bool BuildingBox			= false;
+	bool BuildingBox			= true;
 
 	//-------------------------------------------------- pickups
 	bool PickupName	= true;

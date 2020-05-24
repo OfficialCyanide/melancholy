@@ -3,7 +3,7 @@
 
 class CGlow {
 public:
-	bool Active = true;
+	bool Active = false;
 	float GlowAlpha = 1.0f;
 
 	int PlayerGlow				= 2; //0 off 1 team 2 health 3 caramelldansen

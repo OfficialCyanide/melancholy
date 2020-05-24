@@ -138,15 +138,12 @@ bool CAimbot::CorrectAimPos(CBaseEntity *pLocal, CBaseCombatWeapon *wep, CUserCm
 		if (!ProjectileAim)
 			return false;
 
-		static ConVar *sv_gravity = gInts.ConVars->FindVar("sv_gravity");
-		Vec3 gravity = Vec3(0.0f, 0.0f, (sv_gravity->GetFloat()));
-
-		int local_class			 = pLocal->GetClassNum();
-		Vec3 target_velocity	 = (IsTargetPlayer ? target.ptr->GetVelocity() : Vec3(0.0f, 0.0f, 0.0f));
-		Vec3 target_acceleration = (IsTargetPlayer ? (gravity * ((target.ptr->GetCondEx2() & TFCondEx2_Parachute) ? 0.224f : 1.0f)) : Vec3(0.0f, 0.0f, 0.0f));
-		bool target_onground	 = (IsTargetPlayer ? target.ptr->IsOnGround() : true);
-
-		float ground_hit_height = 0.0f; //this is used to offset the trace.endpos.z
+		int local_class				= pLocal->GetClassNum();
+		bool target_onground		= (IsTargetPlayer ? target.ptr->IsOnGround() : true);
+		Vec3 gravity				= Vec3(0.0f, 0.0f, (gConVars.sv_gravity->GetFloat()));
+		Vec3 target_velocity		= (IsTargetPlayer ? target.ptr->GetVelocity() : Vec3(0.0f, 0.0f, 0.0f));
+		Vec3 target_acceleration	= (IsTargetPlayer ? (gravity * ((target.ptr->GetCondEx2() & TFCondEx2_Parachute) ? 0.224f : 1.0f)) : Vec3(0.0f, 0.0f, 0.0f));
+		float ground_hit_height		= 0.0f; //this is used to offset the trace.endpos.z
 
 		switch (local_class)
 		{
@@ -156,8 +153,7 @@ bool CAimbot::CorrectAimPos(CBaseEntity *pLocal, CBaseCombatWeapon *wep, CUserCm
 				break;
 			}
 
-			case TF2_Demoman:
-			{
+			case TF2_Demoman: {
 				target.ent_pos.z -= (IsTargetPlayer ? 30.0f : 0.0f);
 
 				Vec3 vecDelta = (target.ent_pos - target.local_pos);
@@ -306,14 +302,8 @@ bool CAimbot::CorrectAimPos(CBaseEntity *pLocal, CBaseCombatWeapon *wep, CUserCm
 
 		else
 		{
-			Ray_t ray;
-			ray.Init(target.local_pos, target.ent_pos);
-			CTraceFilter filter;
-			filter.pSkip = target.ptr;
-			CGameTrace trace;
-			gInts.EngineTrace->TraceRay(ray, MASK_SHOT, &filter, &trace);
-
-			if (trace.fraction < 0.99f)
+			//why wasn't I using the funcs that I wrote for vischecking wtf...
+			if (!Utils::Vis_Pos(pLocal, target.ptr, target.local_pos, target.ent_pos))
 			{
 				if (!Multipoint)
 					return false;
@@ -343,11 +333,7 @@ bool CAimbot::CorrectAimPos(CBaseEntity *pLocal, CBaseCombatWeapon *wep, CUserCm
 				{
 					Math::VectorTransform(points[n], transform, out[n]);
 
-					ray.Init(target.local_pos, out[n]);
-					filter.pSkip = target.ptr;
-					gInts.EngineTrace->TraceRay(ray, MASK_SHOT, &filter, &trace);
-
-					if (trace.fraction > 0.98f)
+					if (Utils::Vis_Pos(pLocal, target.ptr, target.local_pos, out[n]))
 					{
 						target.ang_to_ent = Math::CalcAngle(target.local_pos, out[n]);
 
