@@ -47,22 +47,31 @@ void __fastcall PaintTraverse::Hook(void *panels, int edx, unsigned int vgui_pan
 
 		gESP.Run(local);
 
-		//why does this go apeshit in debug mode, aimbot too
 		if (!gInts.Engine->IsConnected() && !gInts.Engine->IsDrawingLoadingImage()) 
 		{
 			gInts.Panels->SetTopmostPopup(vgui_panel, true);
 
-			static std::string msg0 = "melancholy by spook953";
-			static std::string msg1 = "UC Release";
+			static float x = -150.0f, y = 200.0f;
 
-			RGBA_t col = Utils::Rainbow();
-			static int w = 0, h = 0;
+			x += (50.0f * gInts.Globals->interval_per_tick);
+			y += ((sinf(gInts.Globals->curtime) * 15.0f) * gInts.Globals->interval_per_tick);
 
-			gInts.Surface->GetTextSize(gESP.DrawMark.dwFont, Utils::ToWC(msg0.c_str()), w, h);
-			gESP.DrawMark.String((gScreenSize.w / 2) - (w / 2), 100, col, msg0.c_str());
+			static const char *s0 = "melancholy";
+			int w0 = 0, h0 = 0;
+			gInts.Surface->GetTextSize(gESP.DrawMark.dwFont, Utils::ToWC(s0), w0, h0);
 
-			gInts.Surface->GetTextSize(gESP.DrawMark.dwFont, Utils::ToWC(msg1.c_str()), w, h);
-			gESP.DrawMark.String((gScreenSize.w / 2) - (w / 2), 115, col, msg1.c_str());
+			static const char *s1 = "UC release";
+			int w1 = 0, h1 = 0;
+			gInts.Surface->GetTextSize(gESP.DrawMark.dwFont, Utils::ToWC(s1), w1, h1);
+
+			if ((static_cast<int>(x) - w0) > gScreenSize.w) {
+				x = -150.0f;
+			}
+
+			RGBA_t clr = Utils::Rainbow();
+
+			gESP.DrawMark.String((static_cast<int>(x) - (w0 / 2.0f)), (static_cast<int>(y) - (h0 / 2.0f)), clr, s0);
+			gESP.DrawMark.String((static_cast<int>(x) - (w1 / 2.0f)), (static_cast<int>(y) - (h1 / 2.0f) + 16.0f), clr, s1);
 		}
 	}
 }

@@ -878,7 +878,8 @@ void MatHelper_t::ForceMaterial(IMaterial *material, RGBA_t &color, float alpha_
 		return;
 
 	float clr[3] = { color.R_flt(), color.G_flt(), color.B_flt() };
-	float alpha = (alpha_override < 1.0f ? alpha_override : color.A_flt());
+	//float alpha = (alpha_override < 1.0f ? alpha_override : color.A_flt()); did I really write this xd
+	float alpha = alpha_override;
 	gInts.RenderView->SetBlend(alpha);
 	gInts.RenderView->SetColorModulation(clr);
 	gInts.ModelRender->ForcedMaterialOverride(material);

@@ -153,27 +153,6 @@ bool CAimbot::CorrectAimPos(CBaseEntity *pLocal, CBaseCombatWeapon *wep, CUserCm
 				break;
 			}
 
-			case TF2_Demoman: {
-				target.ent_pos.z -= (IsTargetPlayer ? 30.0f : 0.0f);
-
-				Vec3 vecDelta = (target.ent_pos - target.local_pos);
-				float fRange = Math::VectorNormalize(vecDelta); //this normalizes the vector and returns the magnitude/length
-				
-				float fElevationAngle = (fRange * (ProjectileInfo.is_loch_n_load ? 0.006f : 0.009f));
-
-				if (fElevationAngle > 45.0f)
-					fElevationAngle = 45.0f; //if it's more than 45 we're losing range
-
-				float s = 0.0f, c = 0.0f;
-				Math::SinCos((fElevationAngle * PI / 180.0f), &s, &c);
-
-				float fElevation = (fRange * s / c);
-
-				target.ent_pos.z += (c > 0.0f ? fElevation : 0.0f);
-				ground_hit_height = fElevation;
-				break;
-			}
-
 			default: {
 				ground_hit_height = (target.ptr->GetViewOffset().z * 0.8f);
 				break;

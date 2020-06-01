@@ -209,6 +209,8 @@ bool Solve(const Vec3 &origin,
 	Vec3 vecForward = Vec3(), vecRight = Vec3(), vecUp = Vec3();
 	Math::AngleVectors(local_angles, &vecForward, &vecRight, &vecUp);
 
+	int local_class = pLocal->GetClassNum();
+
 	for (float target_time = 0.0f; target_time <= MAX_TIME; target_time += TIME_STEP)
 	{
 		float interp	= gConVars.cl_interp->GetFloat();
@@ -216,6 +218,27 @@ bool Solve(const Vec3 &origin,
 		float time		= (interp + latency + target_time);
 
 		Vec3 predicted_pos = target.PredictPosition(time, target.origin, target.velocity, target.gravity, on_ground);
+		
+		//I have no idea why I thought that I should do this in CAimbot::CorrectAimPos func
+		//it is a lot better now, have fun :)
+		if (local_class == TF2_Demoman)
+		{
+			Vec3 vecDelta = (predicted_pos - origin);
+			float fRange = Math::VectorNormalize(vecDelta); //this normalizes the vector and returns the magnitude/length
+
+			float fElevationAngle = (fRange * (weapon.GetWeaponInfo().is_loch_n_load ? 0.008f : 0.009f));
+
+			if (fElevationAngle > 45.0f)
+				fElevationAngle = 45.0f; //if it's more than 45 we're losing range
+
+			float s = 0.0f, c = 0.0f;
+			Math::SinCos((fElevationAngle * PI / 180.0f), &s, &c);
+
+			float fElevation = (fRange * (s / c));
+
+			predicted_pos.z += (c > 0.0f ? fElevation : 0.0f);
+			on_ground_hit_height = fElevation;
+		}
 
 		ray.Init(target.origin, predicted_pos);
 		gInts.EngineTrace->TraceRay(ray, MASK_PLAYERSOLID, &filter, &trace);
@@ -235,7 +258,7 @@ bool Solve(const Vec3 &origin,
 		{
 			Vec3 local_pos = Vec3();
 
-			switch (pLocal->GetClassNum()) 
+			switch (local_class) 
 			{
 				//only need to vischeck from here and not actually offset the shoot pos...
 				//also many weapons have their own offsets but only rockets are of concern (shooting yourself when peeking)
